@@ -14,6 +14,7 @@ public class Warehouse2Controller : ControllerBase
         _warehouses2Repository = warehouses2Repository;
     }
 
+    //insert
     [HttpPost]
     public async Task<int> AddProductToWarehouses(ProductWarehouse productWarehouse)
     {

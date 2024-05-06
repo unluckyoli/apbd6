@@ -13,26 +13,37 @@ public class WarehousesRepository : IWarehousesRepository
         _configuration = configuration;
     }
 
+    
+    //product nie istnieje
     public async Task<bool> ProductNotExist(int id)
     {
         await using (var connectString = new SqlConnection(_configuration.GetConnectionString("Default")))
         {
             var command = connectString.CreateCommand();
+            
+            
+            
 
             command.CommandText = "select 1 from Product where IdProduct = @idProduct";
-
             command.Parameters.AddWithValue("@idProduct", id);
 
+            
             await connectString.OpenAsync();
 
-            if (await command.ExecuteScalarAsync() is not null)
-            {
+            
+            if (await command.ExecuteScalarAsync() is not null) {
                 return false;
             }
 
             return true;
         }
     }
+    
+    
+    
+    
+    
+    //warehouse nie istnieje
     public async Task<bool> WarehouseNotExist(int id)
     {
         await using (var connectString = new SqlConnection(_configuration.GetConnectionString("Default")))
@@ -57,6 +68,8 @@ public class WarehousesRepository : IWarehousesRepository
     
     
     
+    
+    //order nie istnieje
     public async Task<int> OrderNotExist(ProductWarehouse productWarehouse)
     {
         await using (var connectString = new SqlConnection(_configuration.GetConnectionString("Default")))
@@ -82,6 +95,11 @@ public class WarehousesRepository : IWarehousesRepository
             return -1;
         }
     }
+    
+    
+    
+    
+    //update daty
     public async Task UpdateFulfilledAt(int IdOrder)
     {
         await using (var connectString = new SqlConnection(_configuration.GetConnectionString("Default")))
@@ -98,6 +116,8 @@ public class WarehousesRepository : IWarehousesRepository
         }
     }
     
+    
+    //cena
     public async Task<decimal> GetPrice(int productId)
     {
         await using (var connectString = new SqlConnection(_configuration.GetConnectionString("Default")))
@@ -125,7 +145,7 @@ public class WarehousesRepository : IWarehousesRepository
     
     
     
-    
+    //dodaj productWarehouse
     public async Task<int> InsertProductWarehouse(ProductWarehouse productWarehouse, int orderId)
     {
         await using (var connectString = new SqlConnection(_configuration.GetConnectionString("Default")))

@@ -23,7 +23,7 @@ public class WarehouseController : ControllerBase
         _warehousesRepository = warehousesRepository;
     }
     
-    
+    //add productWarhouse
     [HttpPost]
     public async Task<IActionResult> AddProductWarehouse(ProductWarehouse productWarehouse)
     {
@@ -38,6 +38,8 @@ public class WarehouseController : ControllerBase
         {
             return NotFound("nie ma takiego orderu");
         }
+        
+        
 
         
         
