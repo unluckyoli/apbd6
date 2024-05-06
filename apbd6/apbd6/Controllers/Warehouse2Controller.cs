@@ -15,8 +15,8 @@ public class Warehouse2Controller : ControllerBase
     }
 
     [HttpPost]
-    public async Task<int> AddProductToWarehouses(ProductWarehouse productWarehouseDto)
+    public async Task<int> AddProductToWarehouses(ProductWarehouse productWarehouse)
     {
-        return await _warehouses2Repository.InsertProductWarehouse(productWarehouseDto);
+        return await _warehouses2Repository.InsertProductWarehouse(productWarehouse);
     }
 }
