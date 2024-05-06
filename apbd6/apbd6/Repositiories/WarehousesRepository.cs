@@ -41,6 +41,34 @@ public class WarehousesRepository : IWarehousesRepository
     
     
     
+    //order nie istnieje
+    public async Task<int> OrderNotExist(ProductWarehouse productWarehouse)
+    {
+        await using (var connectString = new SqlConnection(_configuration.GetConnectionString("Default")))
+        {
+            var command = connectString.CreateCommand();
+
+            command.CommandText = "select IdOrder from [Order] where IdProduct = @idProduct " +
+                                  "and Amount = @amount and FulfilledAt IS NULL " +
+                                  "and CreatedAt<@createdAt";
+
+            command.Parameters.AddWithValue("@idProduct", productWarehouse.IdProduct);
+            command.Parameters.AddWithValue("@amount", productWarehouse.Amount);
+            command.Parameters.AddWithValue("@createdAt", productWarehouse.CreatedAt);
+
+            await connectString.OpenAsync();
+
+            var result = await command.ExecuteScalarAsync();
+            if (result is not null)
+            {
+                return (int)result;
+            }
+
+            return -1;
+        }
+    }
+
+    
     
     
     //warehouse nie istnieje
@@ -69,54 +97,6 @@ public class WarehousesRepository : IWarehousesRepository
     
     
     
-    //order nie istnieje
-    public async Task<int> OrderNotExist(ProductWarehouse productWarehouse)
-    {
-        await using (var connectString = new SqlConnection(_configuration.GetConnectionString("Default")))
-        {
-            var command = connectString.CreateCommand();
-
-            command.CommandText = "select IdOrder from [Order] where IdProduct = @idProduct " +
-                                  "and Amount = @amount and FulfilledAt IS NULL " +
-                                  "and CreatedAt<@createdAt";
-
-            command.Parameters.AddWithValue("@idProduct", productWarehouse.IdProduct);
-            command.Parameters.AddWithValue("@amount", productWarehouse.Amount);
-            command.Parameters.AddWithValue("@createdAt", productWarehouse.CreatedAt);
-
-            await connectString.OpenAsync();
-
-            var result = await command.ExecuteScalarAsync();
-            if (result is not null)
-            {
-                return (int)result;
-            }
-
-            return -1;
-        }
-    }
-    
-    
-    
-    
-    //update daty
-    public async Task UpdateFulfilledAt(int IdOrder)
-    {
-        await using (var connectString = new SqlConnection(_configuration.GetConnectionString("Default")))
-        {
-            var command = connectString.CreateCommand();
-
-            command.CommandText = "update [Order] set FulfilledAt = @fulfilledAt where IdOrder = @idOrder";
-
-            command.Parameters.AddWithValue("@fulfilledAt", DateTime.Now);
-            command.Parameters.AddWithValue("@idOrder", IdOrder);
-            
-            await connectString.OpenAsync();
-            await command.ExecuteNonQueryAsync();
-        }
-    }
-    
-    
     //cena
     public async Task<decimal> GetPrice(int productId)
     {
@@ -141,7 +121,22 @@ public class WarehousesRepository : IWarehousesRepository
     
     
     
-    
+    //update daty
+    public async Task UpdateFulfilledAt(int IdOrder)
+    {
+        await using (var connectString = new SqlConnection(_configuration.GetConnectionString("Default")))
+        {
+            var command = connectString.CreateCommand();
+
+            command.CommandText = "update [Order] set FulfilledAt = @fulfilledAt where IdOrder = @idOrder";
+
+            command.Parameters.AddWithValue("@fulfilledAt", DateTime.Now);
+            command.Parameters.AddWithValue("@idOrder", IdOrder);
+            
+            await connectString.OpenAsync();
+            await command.ExecuteNonQueryAsync();
+        }
+    }
     
     
     
